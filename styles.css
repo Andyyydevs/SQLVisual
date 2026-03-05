@@ -1,0 +1,577 @@
+:root {
+  --bg-app: #0a0e1a;
+  --bg-panel: #0d1222;
+  --bg-surface: #111828;
+  --bg-editor: #050814;
+  --border: #1e2640;
+  --border-light: #2a3352;
+  --accent: #4aa5ff;
+  --accent-soft: rgba(74, 165, 255, 0.18);
+  --accent-strong: #7ce7ff;
+  --danger: #ff5c7a;
+  --text-main: #e8ecf4;
+  --text-muted: #8c95b2;
+  --text-soft: #5c667e;
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  --radius: 6px;
+  --radius-sm: 4px;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  --node-green: #2e7d32;
+  --node-olive: #7c8520;
+  --node-red: #b71c1c;
+  --node-purple: #6a1b9a;
+  --node-magenta: #ad1457;
+  --node-teal: #00796b;
+  --node-brown: #8d6e28;
+  --node-blue: #1565c0;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-app);
+  color: var(--text-main);
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ── App Root ── */
+.app-root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ── Top Toolbar ── */
+.top-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 32px;
+  min-height: 32px;
+  padding: 0 8px;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+}
+
+.toolbar-left,
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dialect-dropdown {
+  height: 22px;
+  padding: 0 6px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+  color: var(--text-main);
+  font-size: 11px;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  outline: none;
+}
+
+.dialect-dropdown:focus {
+  border-color: var(--accent);
+}
+
+.dialect-dropdown option {
+  background: var(--bg-panel);
+}
+
+/* ── Tabs ── */
+.tab-group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
+  padding: 0 10px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 11.5px;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.tab-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-main);
+}
+
+.tab-btn.active {
+  background: #2e7d32;
+  border-color: #43a047;
+  color: #e8f5e9;
+}
+
+.tab-btn svg {
+  flex-shrink: 0;
+}
+
+.diagram-tabs .tab-btn {
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  height: 30px;
+  padding: 0 12px;
+  font-size: 11.5px;
+}
+
+.diagram-tabs .tab-btn.active {
+  background: transparent;
+  border-bottom-color: var(--accent);
+  color: var(--accent);
+}
+
+.diagram-tabs .tab-btn:hover {
+  background: transparent;
+  color: var(--text-main);
+}
+
+/* ── Main Content ── */
+.main-content {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ── Editor Panel (Left) ── */
+.editor-panel {
+  width: 38%;
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-panel);
+  border-right: 1px solid var(--border);
+}
+
+.editor-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 28px;
+  min-height: 28px;
+  padding: 0 8px;
+  border-bottom: 1px solid var(--border);
+  gap: 6px;
+}
+
+.editor-collapse-btn {
+  flex-shrink: 0;
+}
+
+.editor-panel.collapsed .editor-shell,
+.editor-panel.collapsed .editor-footer {
+  display: none;
+}
+
+.editor-panel.collapsed {
+  width: 40px !important;
+  min-width: 40px;
+}
+
+.editor-panel.collapsed .editor-header {
+  justify-content: center;
+  padding: 0 4px;
+}
+
+.editor-panel.collapsed .editor-label,
+.editor-panel.collapsed .editor-actions {
+  display: none;
+}
+
+.editor-panel.collapsed .collapse-icon {
+  display: none;
+}
+
+.editor-panel.collapsed .expand-icon {
+  display: block !important;
+}
+
+.editor-label {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--text-main);
+}
+
+.editor-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.ed-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.12s;
+}
+
+.ed-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-main);
+}
+
+.editor-shell {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg-editor);
+  min-height: 0;
+}
+
+.editor-shell .CodeMirror {
+  flex: 1;
+  height: 100% !important;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.45;
+  background-color: var(--bg-editor);
+  color: var(--text-main);
+}
+
+.editor-shell .CodeMirror-scroll {
+  overflow-y: auto !important;
+  overflow-x: auto !important;
+}
+
+.editor-shell .CodeMirror-gutters {
+  background-color: #080c1a;
+  border-right: 1px solid var(--border);
+}
+
+.editor-shell .CodeMirror-linenumber {
+  color: var(--text-soft);
+  padding: 0 6px 0 4px;
+  font-size: 11px;
+}
+
+.editor-shell .CodeMirror-scrollbar-filler {
+  background-color: transparent;
+}
+
+#sqlInput {
+  display: none;
+}
+
+.editor-footer {
+  height: 20px;
+  min-height: 20px;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-panel);
+}
+
+.status-message {
+  font-size: 11px;
+  color: var(--text-soft);
+}
+
+.status-message.ok {
+  color: #81c784;
+}
+
+.status-message.error {
+  color: var(--danger);
+}
+
+/* ── Panel Divider ── */
+.panel-divider {
+  width: 4px;
+  cursor: col-resize;
+  background: var(--border);
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+
+.panel-divider:hover,
+.panel-divider.active {
+  background: var(--accent);
+}
+
+/* ── Diagram Panel (Right) ── */
+.diagram-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  position: relative;
+  background: var(--bg-panel);
+}
+
+.diagram-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 28px;
+  min-height: 28px;
+  padding: 0 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.dg-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.12s;
+}
+
+.dg-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-main);
+}
+
+.search-locate {
+  flex: 1;
+  max-width: 240px;
+}
+
+.locate-dropdown {
+  width: 100%;
+  height: 22px;
+  padding: 0 6px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  font-size: 11px;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  outline: none;
+}
+
+.locate-dropdown:focus {
+  border-color: var(--accent);
+}
+
+.locate-dropdown option {
+  background: var(--bg-panel);
+  color: var(--text-main);
+}
+
+/* ── Diagram Canvas ── */
+.diagram-canvas {
+  flex: 1;
+  overflow: auto;
+  position: relative;
+  min-height: 0;
+  background-color: #080c18;
+  background-image:
+    linear-gradient(rgba(30, 38, 64, 0.4) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(30, 38, 64, 0.4) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.visual-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-soft);
+  padding: 40px;
+}
+
+/* ══════════════════════════════════════════════
+   FLOWCHART NODES
+   ══════════════════════════════════════════════ */
+
+.flowchart-svg {
+  display: block;
+}
+
+.flowchart-node {
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  min-width: 130px;
+  max-width: 300px;
+  width: max-content;
+  cursor: move;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  font-family: var(--font-sans);
+}
+
+.flowchart-node.dragging {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+  opacity: 0.9;
+}
+
+.flowchart-node.dimmed {
+  opacity: 0.3;
+}
+
+.flowchart-node-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #fff;
+  background: var(--node-green);
+  white-space: nowrap;
+}
+
+.flowchart-node-header.color-green { background: var(--node-green); }
+.flowchart-node-header.color-olive { background: var(--node-olive); }
+.flowchart-node-header.color-red { background: var(--node-red); }
+.flowchart-node-header.color-purple { background: var(--node-purple); }
+.flowchart-node-header.color-magenta { background: var(--node-magenta); }
+.flowchart-node-header.color-teal { background: var(--node-teal); }
+.flowchart-node-header.color-brown { background: var(--node-brown); }
+.flowchart-node-header.color-blue { background: var(--node-blue); }
+
+.flowchart-node-columns {
+  padding: 2px 0;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+}
+
+.flowchart-column {
+  padding: 1px 8px;
+  color: var(--text-muted);
+  border-bottom: 1px solid rgba(30, 38, 64, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  line-height: 1.4;
+}
+
+.flowchart-column:last-child {
+  border-bottom: none;
+}
+
+.flowchart-column-name {
+  color: #b0bec5;
+}
+
+.flowchart-column-name.pk {
+  color: #81c784;
+  font-weight: 500;
+}
+
+.flowchart-column-type {
+  color: var(--text-soft);
+  font-size: 10px;
+  margin-left: auto;
+}
+
+.flowchart-column-badge {
+  font-size: 9px;
+  padding: 0 4px;
+  border-radius: 3px;
+  background: rgba(74, 165, 255, 0.2);
+  border: 1px solid rgba(74, 165, 255, 0.4);
+  color: var(--accent-strong);
+  line-height: 1.4;
+}
+
+/* ── Connection Lines ── */
+.flowchart-connection-line {
+  stroke: rgba(74, 165, 255, 0.55);
+  stroke-width: 1.5;
+  fill: none;
+  marker-end: url(#arrowhead);
+  transition: stroke-width 0.15s, opacity 0.15s;
+}
+
+.flowchart-connection-line.fk {
+  stroke: rgba(129, 199, 132, 0.65);
+  stroke-width: 1.8;
+  marker-end: url(#arrowhead-fk);
+}
+
+.flowchart-connection-line.join {
+  stroke: rgba(116, 230, 255, 0.5);
+  stroke-dasharray: 6, 4;
+}
+
+.flowchart-connection-line.insert {
+  stroke: rgba(255, 183, 77, 0.4);
+  stroke-width: 1.2;
+  marker-end: url(#arrowhead-insert);
+}
+
+.flowchart-connection-line.highlighted {
+  stroke-width: 2.5;
+  opacity: 1;
+}
+
+.flowchart-connection-line.dimmed {
+  opacity: 0.15;
+}
+
+.flowchart-port-dot {
+  fill: rgba(180, 200, 255, 0.6);
+}
+
+.flowchart-label {
+  font-size: 9px;
+  fill: var(--text-soft);
+  font-family: var(--font-sans);
+}
+
+/* ── Responsive ── */
+@media (max-width: 760px) {
+  .main-content {
+    flex-direction: column;
+  }
+  .editor-panel {
+    width: 100%;
+    height: 40%;
+    min-width: 0;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .panel-divider {
+    width: 100%;
+    height: 4px;
+    cursor: row-resize;
+  }
+}

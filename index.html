@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Visualize SQL</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material-darker.min.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-root">
+    <!-- Top Toolbar -->
+    <header class="top-toolbar">
+      <div class="toolbar-left">
+        <select id="dialectSelect" class="dialect-dropdown">
+          <option value="oracle">oracle</option>
+          <option value="sqlserver" selected>SQL Server</option>
+          <option value="postgres">postgres</option>
+          <option value="mysql">MySQL</option>
+        </select>
+        <nav class="tab-group">
+          <button class="tab-btn active" id="tabVisualize">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4m-10-10h4m12 0h4"/></svg>
+            visualize
+          </button>
+          <button class="tab-btn" id="tabLineage">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><path d="M10 7h4a3 3 0 013 3v4"/></svg>
+            table Lineage
+          </button>
+          <button class="tab-btn" id="tabJoin">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6"/></svg>
+            Join
+          </button>
+        </nav>
+      </div>
+      <div class="toolbar-right">
+        <nav class="tab-group diagram-tabs">
+          <button class="tab-btn active" id="tabSqlFlow">SQLFlow</button>
+          <button class="tab-btn" id="tabErDiagram">ER diagram</button>
+          <button class="tab-btn" id="tabTextOutput">Text output</button>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Main Content - Horizontal Split -->
+    <main class="main-content">
+      <!-- Left Panel: SQL Editor -->
+      <section class="editor-panel" id="editorPanel">
+        <div class="editor-header">
+          <button class="ed-icon-btn editor-collapse-btn" id="editorCollapseBtn" title="Collapse editor" aria-label="Collapse editor">
+            <svg class="collapse-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            <svg class="expand-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+          <span class="editor-label">SQL</span>
+          <div class="editor-actions">
+            <button class="ed-icon-btn" id="btnCopy" title="Copy SQL">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            </button>
+            <button class="ed-icon-btn" id="btnUndo" title="Undo">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10h10a5 5 0 015 5v2M3 10l5-5M3 10l5 5"/></svg>
+            </button>
+            <button class="ed-icon-btn" id="btnFormat" title="Format SQL">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="14" y2="12"/><line x1="4" y1="18" x2="17" y2="18"/></svg>
+            </button>
+            <button class="ed-icon-btn" id="btnFilter" title="Filter">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46"/></svg>
+            </button>
+            <button class="ed-icon-btn" id="btnRun" title="Run">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="editor-shell" id="editorShell">
+          <textarea id="sqlInput" spellcheck="false" placeholder="-- Write or paste SQL here"></textarea>
+        </div>
+        <div class="editor-footer">
+          <div id="editorStatus" class="status-message"></div>
+        </div>
+      </section>
+
+      <!-- Vertical Divider / Resizer -->
+      <div class="panel-divider" id="panelDivider"></div>
+
+      <!-- Right Panel: Flow Diagram -->
+      <section class="diagram-panel" id="visualPanel">
+        <div class="diagram-toolbar">
+          <button class="dg-icon-btn" title="Info">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          </button>
+          <button class="dg-icon-btn" title="Settings">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+          </button>
+          <div class="search-locate">
+            <select id="locateSelect" class="locate-dropdown">
+              <option value="">select to locate</option>
+            </select>
+          </div>
+          <button class="dg-icon-btn" title="Export">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </button>
+        </div>
+        <div id="visualContainer" class="diagram-canvas">
+          <div class="visual-placeholder">
+            Start typing SQL to see tables and relationships visualized as a flowchart.
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/sql/sql.min.js"></script>
+  <script src="sqlParser.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
