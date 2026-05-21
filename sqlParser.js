@@ -110,6 +110,20 @@
       return id.replace(/^[`"\[]?/, "").replace(/[`"\]]?$/, "").replace(/^\(+/, "").replace(/\)+$/, "");
     }
 
+    static tableBaseName(name) {
+      if (!name) return name;
+      const stripped = this.strip(name);
+      const dot = stripped.lastIndexOf(".");
+      return dot >= 0 ? stripped.slice(dot + 1) : stripped;
+    }
+
+    static resolveTableName(map, name) {
+      const base = this.tableBaseName(name);
+      if (!base) return base;
+      const key = base.toUpperCase();
+      return map[key] ? map[key].name : base;
+    }
+
     static ensureTable(map, name, kind) {
       if (!name) return null;
       const key = name.toUpperCase();
@@ -117,9 +131,11 @@
         map[key] = { name, kind: kind || "SOURCE", columns: [], foreignKeys: [], roles: new Set() };
       }
       if (kind) {
-        if (kind === "TABLE" && map[key].kind === "SOURCE") map[key].kind = "TABLE";
-        else if (kind !== "SOURCE" && kind !== "TABLE") map[key].kind = kind;
         map[key].roles.add(kind);
+        const rank = { TABLE: 5, VIEW: 4, INSERT_TARGET: 3, SUBQUERY: 2, SOURCE: 1 };
+        const cur = rank[map[key].kind] || 0;
+        const next = rank[kind] || 0;
+        if (next >= cur) map[key].kind = kind;
       }
       return map[key];
     }
@@ -167,18 +183,35 @@
           name: colName, isPrimary, type, nullable: !notNull,
           isUnique, isAutoIncrement: isAutoInc, defaultValue
         });
+
+        const inlineFk = def.match(/\bREFERENCES\s+([^\s(]+)\s*\(([^)]+)\)/i);
+        if (inlineFk) {
+          const toTableRaw = this.strip(inlineFk[1]);
+          const toCols = inlineFk[2].split(",").map(c => this.strip(c.trim()));
+          if (toTableRaw && toCols.length) {
+            this.ensureTable(map, toTableRaw, "TABLE");
+            const rel = {
+              fromTable: table.name, fromColumn: colName,
+              toTable: toTableRaw, toColumn: toCols[0], via: "FK"
+            };
+            table.foreignKeys.push(rel);
+            rels.push(rel);
+            fkColNames.add(colName.toUpperCase());
+          }
+        }
       });
 
       const fkRegex = /FOREIGN\s+KEY\s*\(([^)]+)\)\s*REFERENCES\s+([^\s(]+)\s*\(([^)]+)\)/gi;
       let m;
       while ((m = fkRegex.exec(body))) {
         const fromCols = m[1].split(",").map(c => this.strip(c.trim()));
-        const toTable = this.strip(m[2]);
+        const toTableRaw = this.strip(m[2]);
         const toCols = m[3].split(",").map(c => this.strip(c.trim()));
-        if (!fromCols.length || !toCols.length || !toTable) continue;
+        if (!fromCols.length || !toCols.length || !toTableRaw) continue;
+        this.ensureTable(map, toTableRaw, "TABLE");
         const rel = {
           fromTable: table.name, fromColumn: fromCols[0],
-          toTable, toColumn: toCols[0], via: "FK"
+          toTable: toTableRaw, toColumn: toCols[0], via: "FK"
         };
         table.foreignKeys.push(rel);
         rels.push(rel);
@@ -463,6 +496,11 @@
           this.parseFromTables(stmt, map, rels);
           this.enrichTablesFromSelect(stmt, map);
         }
+      });
+
+      rels.forEach((rel) => {
+        rel.fromTable = this.resolveTableName(map, rel.fromTable);
+        rel.toTable = this.resolveTableName(map, rel.toTable);
       });
 
       return { tables: Object.values(map), relationships: rels };

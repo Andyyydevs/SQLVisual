@@ -20,9 +20,9 @@
           <option value="mysql">MySQL</option>
         </select>
         <nav class="tab-group">
-          <button class="tab-btn active" id="tabVisualize">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4m-10-10h4m12 0h4"/></svg>
-            visualize
+          <button class="tab-btn active" id="btnSampleSql" type="button" title="Load sample SQL">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            sample SQL
           </button>
           <button class="tab-btn" id="tabLineage">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><path d="M10 7h4a3 3 0 013 3v4"/></svg>
@@ -32,13 +32,6 @@
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6"/></svg>
             Join
           </button>
-        </nav>
-      </div>
-      <div class="toolbar-right">
-        <nav class="tab-group diagram-tabs">
-          <button class="tab-btn active" id="tabSqlFlow">SQLFlow</button>
-          <button class="tab-btn" id="tabErDiagram">ER diagram</button>
-          <button class="tab-btn" id="tabTextOutput">Text output</button>
         </nav>
       </div>
     </header>
@@ -105,6 +98,7 @@
             Start typing SQL to see tables and relationships visualized as a flowchart.
           </div>
         </div>
+       
       </section>
     </main>
   </div>

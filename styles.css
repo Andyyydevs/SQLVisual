@@ -281,6 +281,12 @@ body {
   background-color: transparent;
 }
 
+.editor-shell .CodeMirror .sql-table-highlight {
+  background: rgba(74, 165, 255, 0.22);
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(74, 165, 255, 0.35);
+}
+
 #sqlInput {
   display: none;
 }
@@ -441,8 +447,32 @@ body {
   opacity: 0.9;
 }
 
+.flowchart-node.highlighted {
+  border-color: var(--accent);
+  box-shadow:
+    0 0 0 2px var(--accent-soft),
+    0 0 18px rgba(74, 165, 255, 0.55);
+  opacity: 1;
+  z-index: 2;
+}
+
+.flowchart-node.connected {
+  border-color: rgba(129, 199, 132, 0.85);
+  box-shadow:
+    0 0 0 1px rgba(129, 199, 132, 0.4),
+    0 0 14px rgba(129, 199, 132, 0.45);
+  opacity: 1;
+}
+
+.flowchart-node.selected {
+  border-color: var(--accent-strong);
+  box-shadow:
+    0 0 0 2px var(--accent-soft),
+    0 0 16px rgba(124, 231, 255, 0.5);
+}
+
 .flowchart-node.dimmed {
-  opacity: 0.3;
+  opacity: 0.28;
 }
 
 .flowchart-node-header {
@@ -474,6 +504,7 @@ body {
 }
 
 .flowchart-column {
+  position: relative;
   padding: 1px 8px;
   color: var(--text-muted);
   border-bottom: 1px solid rgba(30, 38, 64, 0.4);
@@ -539,8 +570,13 @@ body {
 }
 
 .flowchart-connection-line.highlighted {
-  stroke-width: 2.5;
+  stroke-width: 2.8;
   opacity: 1;
+  filter: drop-shadow(0 0 4px rgba(74, 165, 255, 0.6));
+}
+
+.flowchart-connection-line.fk.highlighted {
+  filter: drop-shadow(0 0 4px rgba(129, 199, 132, 0.65));
 }
 
 .flowchart-connection-line.dimmed {
@@ -551,10 +587,21 @@ body {
   fill: rgba(180, 200, 255, 0.6);
 }
 
+.flowchart-label-bg {
+  fill: rgba(13, 18, 34, 0.92);
+  stroke: rgba(42, 51, 82, 0.9);
+  stroke-width: 1;
+}
+
 .flowchart-label {
   font-size: 9px;
-  fill: var(--text-soft);
+  fill: var(--text-muted);
   font-family: var(--font-sans);
+  pointer-events: none;
+}
+
+.flowchart-port-dot.fk {
+  fill: rgba(129, 199, 132, 0.85);
 }
 
 /* ── Responsive ── */

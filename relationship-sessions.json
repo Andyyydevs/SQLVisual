@@ -1,0 +1,13 @@
+{
+  "sqlserver:25474144": {
+    "relationships": [
+      {
+        "fromTable": "orders",
+        "fromColumn": "ON",
+        "toTable": "customers",
+        "toColumn": "email",
+        "via": "MANUAL"
+      }
+    ]
+  }
+}
